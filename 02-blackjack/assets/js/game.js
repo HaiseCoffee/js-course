@@ -14,6 +14,19 @@ const specials = ['A', 'K', 'Q', 'J'];
 const valueA = 11;
 const valueSpecials = 10;
 
+let playerPoints = 0;
+let computerPoints = 0;
+
+const divPlayerCards = document.querySelector('#player-cards');
+const divComputerCards = document.querySelector('#computer-cards');
+// Get all "small" elements
+const pointsHTML = document.querySelectorAll('small');
+
+// HTML References
+const btnAsk = document.querySelector('#btnAskCard');
+const btnFinish = document.querySelector('#btnFinish');
+const btnNewGame = document.querySelector('#btnNewGame');
+
 const createDeck = () => {
     
     // Las cartas son del 2 al 10
@@ -29,7 +42,6 @@ const createDeck = () => {
         }
     } // And here we'll add all the special ones with the same logic than the for above.
     deck = _.shuffle(deck); //shuffle mezcla
-    console.log(deck);
     return deck;
 }
 
@@ -39,8 +51,6 @@ const askCard = () => {
         throw 'Cartas no disponibles en el deck';
     }
     let card = deck.pop();
-    console.log(deck);
-    console.log(card);
     return card;
 
 }
@@ -66,8 +76,89 @@ const cardValue = (card) => {
 }
 
 createDeck();
-askCard();
-cardValue('AD');
 
+const computerTurn = (minPoints) => {
+    do {
+        const card = askCard();
+
+        computerPoints += cardValue(card);
+        pointsHTML[1].innerText = computerPoints;
+    
+        // <img class="card" src="assets/cartas/3C.png">
+    
+        const cardImg = document.createElement('img');
+        cardImg.src = `assets/cartas/${card}.png`;
+        cardImg.classList.add('card');
+    
+        divComputerCards.append(cardImg);
+
+        if(minPoints > 21 ) {
+            break;
+        }
+    } while((computerPoints < minPoints) && (minPoints <= 21));
+    
+    // This will be executed less than 1 second (1000 equals 1 sec)!
+    setTimeout(() => {
+        if (computerPoints === minPoints) {
+            alert('Draw!');
+        } else if (minPoints > 21) {
+            alert('Computer won!');
+        } else if (computerPoints > 21) {
+            alert('Player won');
+        } else {
+            alert('Computer won!');
+        }
+    }, 10);
+
+}
+
+// Buttons Events
+btnAsk.addEventListener('click', () => {
+    const card = askCard();
+
+    playerPoints += cardValue(card);
+    pointsHTML[0].innerText = playerPoints;
+
+    // <img class="card" src="assets/cartas/3C.png">
+
+    const cardImg = document.createElement('img');
+    cardImg.src = `assets/cartas/${card}.png`;
+    cardImg.classList.add('card');
+
+    divPlayerCards.append(cardImg);
+
+    if(playerPoints > 21) {
+        console.warn('You lose');
+        btnAsk.disabled = true;
+        btnFinish.disabled = true;
+        computerTurn(playerPoints);
+    } else if(playerPoints === 21) {
+        console.warn('You won!');
+        btnAsk.disabled = true;
+        btnFinish.disabled = true;
+        computerTurn(playerPoints);
+    }
+});
+
+btnFinish.addEventListener('click', () => {
+    btnAsk.disabled = true;
+    btnFinish.disabled = true;
+    computerTurn(playerPoints);
+})
+
+btnNewGame.addEventListener('click', () => {
+    // location.reload(); to refresh the page
+    console.clear();
+    deck = [];
+    deck = createDeck();
+    playerPoints = 0;
+    computerPoints = 0;
+    pointsHTML[0].innerText = 0;
+    pointsHTML[1].innerText = 0;
+    divComputerCards.innerHTML = '';
+    divPlayerCards.innerHTML = '';
+    btnAsk.disabled = false;
+    btnFinish.disabled = false;
+})
 // Just in case I want to test the throw error.
 // deck = [];
