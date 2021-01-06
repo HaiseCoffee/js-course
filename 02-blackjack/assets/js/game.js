@@ -88,7 +88,7 @@ const computerTurn = (minPoints) => {
     
         const cardImg = document.createElement('img');
         cardImg.src = `assets/cartas/${card}.png`;
-        cardImg.classList.add('card');
+        cardImg.classList.add('cardM');
     
         divComputerCards.append(cardImg);
 
@@ -123,7 +123,7 @@ btnAsk.addEventListener('click', () => {
 
     const cardImg = document.createElement('img');
     cardImg.src = `assets/cartas/${card}.png`;
-    cardImg.classList.add('card');
+    cardImg.classList.add('cardM');
 
     divPlayerCards.append(cardImg);
 
